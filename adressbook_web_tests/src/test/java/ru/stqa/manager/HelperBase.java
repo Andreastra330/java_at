@@ -18,4 +18,10 @@ public class HelperBase {
     protected void click(By locator) {
         manager.findEl(locator).click();
     }
+
+    protected void type(By locator, String text) {
+        manager.findEl(locator).sendKeys(text);
+    }
+
+
 }

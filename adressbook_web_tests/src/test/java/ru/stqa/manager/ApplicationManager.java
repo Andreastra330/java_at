@@ -12,8 +12,9 @@ public class ApplicationManager {
     protected WebDriver driver;
     private LoginHelper session;
     private GroupHelper groups;
+    private ContactHelper contacts;
 
-    public void initial(String browser) {
+    public void initialBrowser(String browser) {
         if (driver == null) {
             if ("firefox".equals(browser)) {
                 driver = new FirefoxDriver();
@@ -43,6 +44,13 @@ public class ApplicationManager {
         return groups;
     }
 
+    public ContactHelper contacts() {
+        if (contacts == null) {
+            contacts = new ContactHelper(this);
+        }
+        return contacts;
+    }
+
     public boolean isElementPresent(By locator) {
         try {
             driver.findElement(locator);
@@ -56,5 +64,11 @@ public class ApplicationManager {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
         return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
+
+    protected void scroll(By locator) {
+        WebElement element = driver.findElement(locator);
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
+    }
+
 
 }

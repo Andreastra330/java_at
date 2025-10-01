@@ -11,7 +11,7 @@ public class LoginHelper extends HelperBase {
     void login(String user, String password) {
         typeWithClear(By.name("user"), user);
         typeWithClear(By.name("pass"), password);
-        click(By.xpath("//input[@value=\'Login\']"));
+        click(By.xpath("//input[@value='Login']"));
     }
 }
 

@@ -12,7 +12,7 @@ public class TestBase {
         if (app == null) {
             app = new ApplicationManager();
         }
-        app.initial(System.getProperty("browser", "chrome"));
+        app.initialBrowser(System.getProperty("browser", "chrome"));
 
     }
 

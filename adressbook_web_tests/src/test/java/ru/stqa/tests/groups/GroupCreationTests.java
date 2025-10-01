@@ -1,7 +1,8 @@
-package ru.stqa.tests;
+package ru.stqa.tests.groups;
 
 import org.junit.jupiter.api.Test;
 import ru.stqa.model.GroupData;
+import ru.stqa.tests.TestBase;
 
 public class GroupCreationTests extends TestBase {
 
