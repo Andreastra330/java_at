@@ -1,6 +1,7 @@
 package ru.stqa.manager;
 
 import org.openqa.selenium.By;
+import ru.stqa.config.ConfigReader;
 import ru.stqa.model.GroupData;
 
 public class GroupHelper extends HelperBase {
@@ -9,19 +10,18 @@ public class GroupHelper extends HelperBase {
         super(manager);
     }
 
-    public void removeGroup() {
-        openGroupPage();
-        selectGroup();
-        deleteGroup();
-        returnToGroupPage();
-    }
-
-
     public void createGroup(GroupData group) {
         openGroupPage();
         initGroupCreation();
         fillGroupForm(group);
         submitGroupCreation();
+        returnToGroupPage();
+    }
+
+    public void removeGroup() {
+        openGroupPage();
+        selectGroup();
+        deleteGroups();
         returnToGroupPage();
     }
 
@@ -34,16 +34,16 @@ public class GroupHelper extends HelperBase {
         returnToGroupPage();
     }
 
-    private void deleteGroup() {
+    public void removeAllGroups() {
+        openGroupPage();
+        selectAllGroups();
+        deleteGroups();
+
+    }
+
+    private void deleteGroups() {
         click(By.name("delete"));
     }
-
-
-    public boolean isGroupPresent() {
-        openGroupPage();
-        return manager.isElementPresent(By.name("selected[]"));
-    }
-
 
     private void submitGroupCreation() {
         click(By.name("submit"));
@@ -53,9 +53,10 @@ public class GroupHelper extends HelperBase {
         click(By.name("new"));
     }
 
-
     public void openGroupPage() {
-        if (!manager.isElementPresent(By.name("new"))) {
+        var currentUrl = manager.driver.getCurrentUrl();
+        assert currentUrl != null;
+        if (!currentUrl.equals(groupUrl())) {
             click(By.linkText("groups"));
         }
     }
@@ -82,4 +83,23 @@ public class GroupHelper extends HelperBase {
         typeWithClear(By.name("group_footer"), group.footer());
     }
 
+    public int getCount() {
+        var currentUrl = manager.driver.getCurrentUrl();
+        assert currentUrl != null;
+        if (!currentUrl.equals(groupUrl())) {
+            openGroupPage();
+        }
+        return manager.driver.findElements(By.name("selected[]")).size();
+    }
+
+    private void selectAllGroups() {
+        var checkboxes = manager.driver.findElements(By.name("selected[]"));
+        for (var checkbox : checkboxes) {
+            checkbox.click();
+        }
+    }
+
+    public String groupUrl() {
+        return ConfigReader.buildUrl("/group.php");
+    }
 }

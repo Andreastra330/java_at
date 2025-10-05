@@ -29,4 +29,13 @@ public class ConfigReader {
     public static String getBaseUrl() {
         return properties.getProperty("base.url");
     }
+
+    public static String buildUrl(String endpoint) {
+        String baseUrl = getBaseUrl();
+        if (endpoint.startsWith("/")) {
+            return baseUrl + endpoint;
+        } else {
+            return baseUrl + "/" + endpoint;
+        }
+    }
 }

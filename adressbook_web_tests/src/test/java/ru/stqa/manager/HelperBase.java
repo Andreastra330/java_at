@@ -11,16 +11,16 @@ public class HelperBase {
 
     protected void typeWithClear(By locator, String text) {
         click(locator);
-        manager.findEl(locator).clear();
-        manager.findEl(locator).sendKeys(text);
+        manager.findEl(locator, 3).clear();
+        manager.findEl(locator, 3).sendKeys(text);
     }
 
     protected void click(By locator) {
-        manager.findEl(locator).click();
+        manager.findEl(locator, 5).click();
     }
 
     protected void type(By locator, String text) {
-        manager.findEl(locator).sendKeys(text);
+        manager.findEl(locator, 3).sendKeys(text);
     }
 
 

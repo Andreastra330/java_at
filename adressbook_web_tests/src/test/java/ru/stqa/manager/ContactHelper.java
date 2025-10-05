@@ -1,6 +1,7 @@
 package ru.stqa.manager;
 
 import org.openqa.selenium.By;
+import ru.stqa.config.ConfigReader;
 import ru.stqa.model.ContactData;
 
 public class ContactHelper extends HelperBase {
@@ -23,6 +24,18 @@ public class ContactHelper extends HelperBase {
 
     }
 
+    public void deleteAllContactsWithClick() {
+        selectAllGroupsWithClick();
+        initialDelete();
+        returnToContactPage();
+    }
+
+    public void deleteAllContacts() {
+        selectAllGroups();
+        initialDelete();
+        returnToContactPage();
+    }
+
     public void initialDelete() {
         click(By.name("delete"));
     }
@@ -31,11 +44,6 @@ public class ContactHelper extends HelperBase {
         click(By.name("selected[]"));
     }
 
-    public boolean isContactPresent() {
-        openContactPage();
-        return manager.isElementPresent(By.name("selected[]"));
-
-    }
 
     public void returnToContactPage() {
         click(By.linkText("home page"));
@@ -130,5 +138,25 @@ public class ContactHelper extends HelperBase {
         type(By.name("middlename"), contact.middleName());
         type(By.name("lastname"), contact.lastName());
         type(By.name("nickname"), contact.nickName());
+    }
+
+    public int getCount() {
+        var currentUrl = manager.driver.getCurrentUrl();
+        assert currentUrl != null;
+        if (!currentUrl.equals(ConfigReader.getBaseUrl())) {
+            openContactPage();
+        }
+        return manager.driver.findElements(By.name("selected[]")).size();
+    }
+
+    private void selectAllGroupsWithClick() {
+        var checkboxes = manager.driver.findElements(By.name("selected[]"));
+        for (var checkbox : checkboxes) {
+            checkbox.click();
+        }
+    }
+
+    private void selectAllGroups() {
+        click(By.xpath("//input[@onclick='MassSelection()']"));
     }
 }
