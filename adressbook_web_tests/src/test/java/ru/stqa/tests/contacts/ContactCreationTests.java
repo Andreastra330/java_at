@@ -17,18 +17,17 @@ public class ContactCreationTests extends TestBase {
             for (var middleName : List.of("", "Andreevich")) {
                 for (var lastName : List.of("", "Orlov")) {
                     for (var nickName : List.of("", "Andreastra")) {
-                        for (var title : List.of("", "QA Engineer")) {
-                            for (var company : List.of("", "SberBuisness")) {
-                                for (var address : List.of("", "Moscow")) {
-                                    result.add(new ContactData(firstName, middleName, lastName, nickName, title, company, address, "", "", "", "", "", "",
-                                            "", "", "", "", "", "", "", ""));
+                                    result.add(new ContactData(firstName, middleName, lastName, nickName,  "QA Engineer", "SberBuisness", "Moscow, Red Square, 1",
+                                            "+7-495-123-4567", "+7-916-765-4321", "+7-495-987-6543", "+7-495-111-2222",
+                                            "my@work.com", "my@personal.com", "my@backup.com",
+                                            "my-site.com", "1997", "2015","31","September","24","June"));
                                 }
                             }
                         }
                     }
-                }
-            }
-        }
+
+
+
         return result;
     }
 
