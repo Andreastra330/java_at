@@ -28,6 +28,32 @@ public class ContactHelper extends HelperBase {
 
     }
 
+    public void modifyContact(ContactData contact, ContactData modifyContact)
+    {
+        openContactOnEdit(contact);
+        fillForm(modifyContact);
+        saveEditOnForm();
+        returnToContactPage();
+    }
+
+    private void saveEditOnForm() {
+        click(By.name("update"));
+    }
+
+    private void fillForm(ContactData contact) {
+        typeWithClear(By.name("firstname"),contact.firstName());
+        typeWithClear(By.name("lastname"),contact.lastName());
+        typeWithClear(By.name("address"),contact.address());
+        typeWithClear(By.name("work"),contact.work());
+        typeWithClear(By.name("email"),contact.email());
+
+    }
+
+    private void openContactOnEdit(ContactData contact) {
+        click(By.xpath(String.format("//a[@href= 'edit.php?id=%s']",contact.id())));
+    }
+
+
     public void deleteAllContactsWithClick() {
         selectAllGroupsWithClick();
         initialDelete();
