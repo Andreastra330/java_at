@@ -1,8 +1,13 @@
 package ru.stqa.manager;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import ru.stqa.config.ConfigReader;
 import ru.stqa.model.GroupData;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class GroupHelper extends HelperBase {
 
@@ -18,16 +23,16 @@ public class GroupHelper extends HelperBase {
         returnToGroupPage();
     }
 
-    public void removeGroup() {
+    public void removeGroup(GroupData group) {
         openGroupPage();
-        selectGroup();
+        selectGroup(group);
         deleteGroups();
-        returnToGroupPage();
+
     }
 
-    public void modifyGroup(GroupData modifyGroup) {
+    public void modifyGroup(GroupData group, GroupData modifyGroup) {
         openGroupPage();
-        selectGroup();
+        selectGroup(group);
         initGroupModification();
         fillGroupForm(modifyGroup);
         submitGroupModification();
@@ -62,7 +67,11 @@ public class GroupHelper extends HelperBase {
     }
 
     private void returnToGroupPage() {
-        click(By.linkText("group page"));
+        try {
+            click(By.linkText("group page"));
+        } catch (TimeoutException e) {
+            click(By.linkText("groups"));
+        }
     }
 
     private void submitGroupModification() {
@@ -73,8 +82,8 @@ public class GroupHelper extends HelperBase {
         click(By.name("edit"));
     }
 
-    private void selectGroup() {
-        click(By.name("selected[]"));
+    private void selectGroup(GroupData group) {
+        click(By.xpath(String.format(("//input[@value='%s']"), group.id())));
     }
 
     private void fillGroupForm(GroupData group) {
@@ -102,4 +111,30 @@ public class GroupHelper extends HelperBase {
     public String groupUrl() {
         return ConfigReader.buildUrl("/group.php");
     }
+
+    public List<GroupData> getList() {
+        var currentUrl = manager.driver.getCurrentUrl();
+        assert currentUrl != null;
+        if (!currentUrl.equals(groupUrl())) {
+            openGroupPage();
+        }
+        var groups = new ArrayList<GroupData>();
+        var spans = manager.driver.findElements(By.xpath("//span[@class='group']"));
+        for (var span : spans) {
+            var name = span.getText();
+            var checkbox = span.findElement(By.name("selected[]"));
+            var id = checkbox.getAttribute("value");
+            groups.add(new GroupData().withId(id).withName(name));
+        }
+        return groups;
+    }
+
+    public Comparator<GroupData> compareById() {
+        return (o1, o2) -> Integer.compare(
+                Integer.parseInt(o1.id()),
+                Integer.parseInt(o2.id())
+        );
+    }
+
+
 }

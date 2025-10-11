@@ -4,6 +4,10 @@ import org.openqa.selenium.By;
 import ru.stqa.config.ConfigReader;
 import ru.stqa.model.ContactData;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 public class ContactHelper extends HelperBase {
 
     public ContactHelper(ApplicationManager manager) {
@@ -17,8 +21,8 @@ public class ContactHelper extends HelperBase {
         returnToContactPage();
     }
 
-    public void deleteContact() {
-        selectContact();
+    public void deleteContact(ContactData contact) {
+        selectContact(contact);
         initialDelete();
         returnToContactPage();
 
@@ -40,8 +44,8 @@ public class ContactHelper extends HelperBase {
         click(By.name("delete"));
     }
 
-    public void selectContact() {
-        click(By.name("selected[]"));
+    public void selectContact(ContactData contact) {
+        click(By.xpath(String.format("//td[@class = 'center']/input[@id = '%s']", contact.id())));
     }
 
 
@@ -62,82 +66,16 @@ public class ContactHelper extends HelperBase {
     }
 
     public void fillContactForm(ContactData contact) {
-        fillContactInfo(contact);
-        fillCompanyInfo(contact);
-        fillPhoneInfo(contact);
-        fillEmailInfo(contact);
-        fillPageInfo(contact);
-        fillDateForm(contact);
-    }
-
-    private void fillPageInfo(ContactData contact) {
-        type(By.name("homepage"), contact.homePage());
-        type(By.name("byear"), contact.birthdayYear());
-        type(By.name("ayear"), contact.anniversaryYear());
-    }
-
-    private void fillDateForm(ContactData contact) {
-        if (!contact.birthDay().isEmpty()) {
-            choiceBirthDay(contact.birthDay());
-        }
-        if (!contact.birthMonth().isEmpty()) {
-            choiceBirthdayMonth(contact.birthMonth());
-        }
-        if (!contact.anniversaryDay().isEmpty()) {
-            choiceAnniversaryDay(contact.anniversaryDay());
-        }
-        if (!contact.anniversaryMonth().isEmpty()) {
-            choiceAnniversaryMonth(contact.anniversaryMonth());
-        }
+        fillInfo(contact);
     }
 
 
-    private void choiceBirthdayMonth(String month) {
-        click(By.name("bmonth"));
-        click(By.xpath(String.format("//select[@name='bmonth']/option[@value='%s']", month)));
-    }
-
-    private void choiceBirthDay(String day) {
-        click(By.name("bday"));
-        manager.scroll(By.xpath(String.format("//select[@name='bday']/option[@value='%s']", day)));
-        click(By.xpath(String.format("//select[@name='bday']/option[@value='%s']", day)));
-    }
-
-    private void choiceAnniversaryMonth(String month) {
-        click(By.name("amonth"));
-        click(By.xpath(String.format("//select[@name='amonth']/option[@value='%s']", month)));
-    }
-
-    private void choiceAnniversaryDay(String day) {
-        click(By.name("aday"));
-        manager.scroll(By.xpath(String.format("//select[@name='aday']/option[@value='%s']", day)));
-        click(By.xpath(String.format("//select[@name='aday']/option[@value='%s']", day)));
-    }
-
-    private void fillEmailInfo(ContactData contact) {
-        type(By.name("email"), contact.email());
-        type(By.name("email2"), contact.email2());
-        type(By.name("email3"), contact.email3());
-    }
-
-    private void fillPhoneInfo(ContactData contact) {
-        type(By.name("home"), contact.home());
-        type(By.name("mobile"), contact.mobile());
-        type(By.name("work"), contact.work());
-        type(By.name("fax"), contact.fax());
-    }
-
-    private void fillCompanyInfo(ContactData contact) {
-        type(By.name("title"), contact.title());
-        type(By.name("company"), contact.company());
-        type(By.name("address"), contact.address());
-    }
-
-    private void fillContactInfo(ContactData contact) {
+    private void fillInfo(ContactData contact) {
         type(By.name("firstname"), contact.firstName());
-        type(By.name("middlename"), contact.middleName());
         type(By.name("lastname"), contact.lastName());
-        type(By.name("nickname"), contact.nickName());
+        type(By.name("address"), contact.address());
+        type(By.name("email"), contact.email());
+        type(By.name("work"), contact.work());
     }
 
     public int getCount() {
@@ -158,5 +96,32 @@ public class ContactHelper extends HelperBase {
 
     private void selectAllGroups() {
         click(By.xpath("//input[@onclick='MassSelection()']"));
+    }
+
+    public List<ContactData> getList() {
+        var currentUrl = manager.driver.getCurrentUrl();
+        assert currentUrl != null;
+        if (!currentUrl.equals(ConfigReader.getBaseUrl())) {
+            openContactPage();
+        }
+        var contacts = new ArrayList<ContactData>();
+        var checkboxes = manager.driver.findElements(By.xpath("//tr[@name = 'entry']"));
+        for (var checkbox : checkboxes) {
+            var id = checkbox.findElement(By.xpath("./td[1]//input[@name = 'selected[]']")).getAttribute("id");
+            var lastName = checkbox.findElement(By.xpath("./td[2]")).getText();
+            var firstName = checkbox.findElement(By.xpath("./td[3]")).getText();
+            var address = checkbox.findElement(By.xpath("./td[4]")).getText();
+            var email = checkbox.findElement(By.xpath("./td[5]")).getText();
+            var phone = checkbox.findElement(By.xpath("./td[6]")).getText();
+            contacts.add(new ContactData().withId(id).withFirstName(firstName).withLastName(lastName).withAdress(address).withEmail(email).withWorkPhone(phone));
+        }
+        return contacts;
+    }
+
+    public Comparator<ContactData> compareById() {
+        return (o1, o2) -> Integer.compare(
+                Integer.parseInt(o1.id()),
+                Integer.parseInt(o2.id())
+        );
     }
 }
