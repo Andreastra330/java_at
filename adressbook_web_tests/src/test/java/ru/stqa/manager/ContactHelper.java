@@ -137,9 +137,9 @@ public class ContactHelper extends HelperBase {
             var lastName = checkbox.findElement(By.xpath("./td[2]")).getText();
             var firstName = checkbox.findElement(By.xpath("./td[3]")).getText();
             var address = checkbox.findElement(By.xpath("./td[4]")).getText();
-            var email = checkbox.findElement(By.xpath("./td[5]")).getText();
-            var phone = checkbox.findElement(By.xpath("./td[6]")).getText();
-            contacts.add(new ContactData().withId(id).withFirstName(firstName).withLastName(lastName).withAdress(address).withEmail(email).withWorkPhone(phone));
+            var allEmails = checkbox.findElement(By.xpath("./td[5]")).getText();
+            var allPhone = checkbox.findElement(By.xpath("./td[6]")).getText();
+            contacts.add(new ContactData().withId(id).withFirstName(firstName).withLastName(lastName).withAdress(address));
         }
         return contacts;
     }

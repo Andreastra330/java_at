@@ -12,7 +12,7 @@ public class ContactModifyTests extends TestBase {
     @Test
     void canModifyContact() {
         if(app.contacts().getCount() == 0){
-            app.contacts().createContact(new ContactData("","2","3","4","5","6"));
+            app.contacts().createContact(new ContactData());
         }
 
         var oldContacts = app.contacts().getList();
@@ -20,9 +20,7 @@ public class ContactModifyTests extends TestBase {
         var modifyData = new ContactData()
                 .withFirstName("MODIFY NAME")
                 .withLastName("MODIFY LAST NAME")
-                .withAdress("MODIFY ADDRESS")
-                .withEmail("MODIFY EMAIL")
-                .withWorkPhone("+111111111");
+                .withAdress("MODIFY ADDRESS");
 
         app.contacts().modifyContact(oldContacts.get(index), modifyData);
         var newContacts = app.contacts().getList();
