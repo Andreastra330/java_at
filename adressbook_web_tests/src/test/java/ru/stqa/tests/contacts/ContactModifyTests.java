@@ -20,7 +20,7 @@ public class ContactModifyTests extends TestBase {
         var modifyData = new ContactData()
                 .withFirstName("MODIFY NAME")
                 .withLastName("MODIFY LAST NAME")
-                .withAdress("MODIFY ADDRESS");
+                .withAddress("MODIFY ADDRESS");
 
         app.contacts().modifyContact(oldContacts.get(index), modifyData);
         var newContacts = app.contacts().getList();

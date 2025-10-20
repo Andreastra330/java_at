@@ -2,6 +2,8 @@ package ru.stqa.manager;
 
 import org.openqa.selenium.By;
 
+import java.nio.file.Paths;
+
 public class HelperBase {
     protected final ApplicationManager manager;
 
@@ -23,5 +25,10 @@ public class HelperBase {
         manager.findEl(locator, 3).sendKeys(text);
     }
 
+    protected void attach(By locator, String file) {
+        if (!file.isEmpty()) {
+            manager.findEl(locator, 3).sendKeys(Paths.get(file).toAbsolutePath().toString());
+        } else {}
+    }
 
 }

@@ -5,26 +5,37 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.stqa.model.ContactData;
+import ru.stqa.model.GroupData;
 import ru.stqa.tests.TestBase;
+import ru.stqa.utils.Utils;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class ContactCreationTests extends TestBase {
 
-    public static List<ContactData> contactProvider() {
+    public static List<ContactData> contactProvider() throws IOException {
         var result = new ArrayList<ContactData>();
-        for (var firstName : List.of("", "Andrey")) {
-            for (var lastName : List.of("", "Orlov")) {
-                for (var address : List.of("", "Moscow, Red Square, 1")) {
-                    result.add(new ContactData("", firstName, "Andreevich", lastName, "nickname",  "QA Engineer", "SberBuisness", address,
-                            "+7-495-123-4567", "+7-916-765-4321", "+7-495-987-6543", "+7-495-111-2222",
-                            "my@work.com", "my@personal.com", "my@backup.com",
-                            "my-site.com", "1997", "2015","31","September","24","June"));
-                }
-            }
-        }
+//        for (var firstName : List.of("", "Andrey")) {
+//            for (var lastName : List.of("", "Orlov")) {
+//                for (var address : List.of("", "Moscow, Red Square, 1")) {
+//                    result.add(new ContactData("", firstName, "Andreevich", lastName, "nickname",  "QA Engineer", "SberBuisness", address,
+//                            "+7-495-123-4567", "+7-916-765-4321", "+7-495-987-6543", "+7-495-111-2222",
+//                            "my@work.com", "my@personal.com", "my@backup.com",
+//                            "my-site.com", "1997", "2015","31","September","24","June", ""));
+//                }
+//            }
+//        }
+        var json = Files.readString(Paths.get("contacts.json"));
+        ObjectMapper mapper = new ObjectMapper();
+        var value = mapper.readValue(json, new TypeReference<List<ContactData>>() {});
+        result.addAll(value);
         return result;
     }
 
@@ -53,4 +64,8 @@ public class ContactCreationTests extends TestBase {
         app.contacts().createContact(new ContactData().withFirstName("Andrey"));
     }
 
+    @Test
+    public void canCreateOnlyWithPhono(){
+        app.contacts().createContact(new ContactData().withPhoto(Utils.randomFile("src/test/resources/images")));
+    }
 }

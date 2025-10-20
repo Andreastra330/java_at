@@ -102,6 +102,7 @@ public class ContactHelper extends HelperBase {
         type(By.name("address"), contact.address());
         type(By.name("email"), contact.email());
         type(By.name("work"), contact.work());
+        attach(By.name("photo"),contact.photo());
     }
 
     public int getCount() {
@@ -139,7 +140,7 @@ public class ContactHelper extends HelperBase {
             var address = checkbox.findElement(By.xpath("./td[4]")).getText();
             var allEmails = checkbox.findElement(By.xpath("./td[5]")).getText();
             var allPhone = checkbox.findElement(By.xpath("./td[6]")).getText();
-            contacts.add(new ContactData().withId(id).withFirstName(firstName).withLastName(lastName).withAdress(address));
+            contacts.add(new ContactData().withId(id).withFirstName(firstName).withLastName(lastName).withAddress(address));
         }
         return contacts;
     }
