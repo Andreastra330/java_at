@@ -136,5 +136,11 @@ public class GroupHelper extends HelperBase {
         );
     }
 
+    public List<String> compareGroupsWithStream(List<GroupData> groups) {
+        return groups.stream()
+                .sorted(compareById())
+                .map(g -> g.id() + ":" + g.name())
+                .toList();
+    }
 
 }

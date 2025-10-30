@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.stqa.model.GroupData;
 import ru.stqa.tests.TestBase;
+
 import java.util.Random;
 
 public class GroupRemovalTests extends TestBase {
@@ -29,5 +30,20 @@ public class GroupRemovalTests extends TestBase {
         app.groups().removeAllGroups();
         Assertions.assertEquals(0, app.groups().getCount());
     }
+
+    @Test
+    public void canRemoveGroupHibernate() {
+        if (app.hbm().getGroupCount() == 0) {
+            app.hbm().createGroup(new GroupData("", "group name", "group header", "group footer"));
+        }
+        var oldGroups = app.hbm().getGroupListHibernate();
+        int index = new Random().nextInt(oldGroups.size());
+        app.groups().removeGroup(oldGroups.get(index));
+        app.sleep(1000);
+        var newGroups = app.hbm().getGroupListHibernate();
+        oldGroups.remove(index);
+        Assertions.assertEquals(newGroups, oldGroups);
+    }
+
 
 }

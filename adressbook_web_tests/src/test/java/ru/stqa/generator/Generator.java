@@ -12,23 +12,20 @@ import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Generator {
-    @Parameter(names = {"--type","-t"})
+    @Parameter(names = {"--type", "-t"})
     String type;
 
-    @Parameter(names = {"--output","-o"})
+    @Parameter(names = {"--output", "-o"})
     String output;
 
-    @Parameter(names = {"--format","-f"})
+    @Parameter(names = {"--format", "-f"})
     String format;
 
-    @Parameter(names = {"--count","-c"})
+    @Parameter(names = {"--count", "-c"})
     int count;
 
     public static void main(String[] args) throws IOException {
@@ -46,27 +43,49 @@ public class Generator {
     }
 
     private void save(Object data) throws IOException {
-        if("json".equals(format)) {
-            ObjectMapper mapper = JsonMapper.builder().enable(SerializationFeature.INDENT_OUTPUT).build();
-            var json =  mapper.writeValueAsString(data);
-            try (var writer = new FileWriter(output))
-            {
-            writer.write(json);
-            }
+
+        String outputDir = "src/test/resources/GeneratorFiles";
+        File outputFile = new File(output);
+        if (!outputFile.getPath().contains(File.separator)) {
+            outputFile = new File(outputDir, output);
+        }
+
+        if ("json".equals(format)) {
+            ObjectMapper mapper = JsonMapper.builder()
+                    .enable(SerializationFeature.INDENT_OUTPUT)
+                    .build();
+            mapper.writeValue(outputFile, data);
+
         } else if ("yaml".equals(format)) {
-            var mapper = new YAMLMapper();
-            mapper.writeValue(new File(output),data);
+            new YAMLMapper().writeValue(outputFile, data);
+
         } else if ("xml".equals(format)) {
-            var mapper = new XmlMapper();
-            mapper.writeValue(new File(output),data);
-        } else {throw new IllegalArgumentException(" Неизвестный формат " + format);}
+            new XmlMapper().writeValue(outputFile, data);
+
+        } else {
+            throw new IllegalArgumentException("Неизвестный формат: " + format);
+        }
+//        if("json".equals(format)) {
+//            ObjectMapper mapper = JsonMapper.builder().enable(SerializationFeature.INDENT_OUTPUT).build();
+//            var json =  mapper.writeValueAsString(data);
+//            try (var writer = new FileWriter(output))
+//            {
+//            writer.write(json);
+//            }
+//        } else if ("yaml".equals(format)) {
+//            var mapper = new YAMLMapper();
+//            mapper.writeValue(new File(output),data);
+//        } else if ("xml".equals(format)) {
+//            var mapper = new XmlMapper();
+//            mapper.writeValue(new File(output),data);
+//        } else {throw new IllegalArgumentException(" Неизвестный формат " + format);}
 
     }
 
     private Object generate() {
-        if ("groups".equals(type)){
+        if ("groups".equals(type)) {
             return generateGroups();
-        }else if("contacts".equals(type)){
+        } else if ("contacts".equals(type)) {
             return generateContacts();
         } else {
             throw new IllegalArgumentException("Неизвестный тип" + type);
@@ -95,7 +114,7 @@ public class Generator {
                     .withLastName(Utils.randomString(i * 10))
                     .withAddress(Utils.randomString(i * 10))
                     .withEmail(Utils.randomString(i * 10))
-                    .withWorkPhone(Utils.randomInt(i*2))
+                    .withWorkPhone(Utils.randomInt(i * 2))
                     .withPhoto(Utils.randomFile("src/test/resources/images"))
             );
         }

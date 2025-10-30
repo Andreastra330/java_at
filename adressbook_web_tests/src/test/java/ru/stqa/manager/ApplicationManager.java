@@ -15,6 +15,8 @@ public class ApplicationManager {
     private LoginHelper session;
     private GroupHelper groups;
     private ContactHelper contacts;
+    private JdbcHelper jdbc;
+    private HibernateHelper hbm;
 
     public void initialBrowser(String browser) {
         String baseUrl = ConfigReader.getBaseUrl();
@@ -54,6 +56,20 @@ public class ApplicationManager {
         return contacts;
     }
 
+    public JdbcHelper jdbc() {
+        if (jdbc == null) {
+            jdbc = new JdbcHelper(this);
+        }
+        return jdbc;
+    }
+
+    public HibernateHelper hbm() {
+        if (hbm == null) {
+            hbm = new HibernateHelper(this);
+        }
+        return hbm;
+    }
+
     public boolean isElementPresent(By locator) {
         try {
             Thread.sleep(100);
@@ -81,5 +97,12 @@ public class ApplicationManager {
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
     }
 
+    public void sleep(int time) {
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

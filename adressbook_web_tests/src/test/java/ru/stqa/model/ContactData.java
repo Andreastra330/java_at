@@ -9,11 +9,20 @@ public record ContactData(
         String birthDay, String birthMonth, String anniversaryDay, String anniversaryMonth, String photo) {
 
     public ContactData() {
-        this(        "", "", "", "", "", "",
-                "", "","","", "", "", "",
-                  "","", "", "", "",
-                "","", "", "", "");
+        this("", "", "", "", "", "",
+                "", "", "", "", "", "", "",
+                "", "", "", "", "",
+                "", "", "", "", "");
     }
+
+    public ContactData(String id, String firstName, String lastName,
+                       String address, String email, String email2, String email3,
+                       String home, String mobile, String work) {
+        this(id, firstName, "", lastName, "", "", "", address,
+                home, mobile, work, "", email, email2, email3,
+                "", "", "", "", "", "", "", "");
+    }
+
 
     public ContactData withId(String id) {
         return new ContactData(id, this.firstName, this.middleName, this.lastName, this.nickName, this.title, this.company, this.address,

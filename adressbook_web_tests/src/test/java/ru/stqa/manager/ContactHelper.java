@@ -22,14 +22,23 @@ public class ContactHelper extends HelperBase {
     }
 
     public void deleteContact(ContactData contact) {
+        openContactPage();
         selectContact(contact);
         initialDelete();
         returnToContactPage();
 
     }
 
-    public void modifyContact(ContactData contact, ContactData modifyContact)
-    {
+    public void modifyContact(ContactData contact, ContactData modifyContact) {
+        openContactPage();
+        openContactOnEdit(contact);
+        fillForm(modifyContact);
+        saveEditOnForm();
+        returnToContactPage();
+    }
+
+    public void modifyContactHibarnate(ContactData contact, ContactData modifyContact) {
+        openContactPage();
         openContactOnEdit(contact);
         fillForm(modifyContact);
         saveEditOnForm();
@@ -41,16 +50,21 @@ public class ContactHelper extends HelperBase {
     }
 
     private void fillForm(ContactData contact) {
-        typeWithClear(By.name("firstname"),contact.firstName());
-        typeWithClear(By.name("lastname"),contact.lastName());
-        typeWithClear(By.name("address"),contact.address());
-        typeWithClear(By.name("work"),contact.work());
-        typeWithClear(By.name("email"),contact.email());
+        typeWithClear(By.name("firstname"), contact.firstName());
+        typeWithClear(By.name("lastname"), contact.lastName());
+        typeWithClear(By.name("address"), contact.address());
+        typeWithClear(By.name("work"), contact.work());
+        typeWithClear(By.name("email"), contact.email());
 
     }
 
     private void openContactOnEdit(ContactData contact) {
-        click(By.xpath(String.format("//a[@href= 'edit.php?id=%s']",contact.id())));
+        var currentUrl = manager.driver.getCurrentUrl();
+        assert currentUrl != null;
+        if (!currentUrl.equals(ConfigReader.getBaseUrl())) {
+            openContactPage();
+        }
+        click(By.xpath(String.format("//a[@href= 'edit.php?id=%s']", contact.id())));
     }
 
 
@@ -102,7 +116,7 @@ public class ContactHelper extends HelperBase {
         type(By.name("address"), contact.address());
         type(By.name("email"), contact.email());
         type(By.name("work"), contact.work());
-        attach(By.name("photo"),contact.photo());
+        attach(By.name("photo"), contact.photo());
     }
 
     public int getCount() {
@@ -150,5 +164,12 @@ public class ContactHelper extends HelperBase {
                 Integer.parseInt(o1.id()),
                 Integer.parseInt(o2.id())
         );
+    }
+
+    public List<String> compareContactsWithModifyData(List<ContactData> contact) {
+        return contact.stream()
+                .sorted(compareById())
+                .map(g -> g.id() + ":" + g.firstName() + ":" + g.lastName() + ":" + g.address())
+                .toList();
     }
 }
