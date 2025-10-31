@@ -46,23 +46,6 @@ public class GroupCreationTests extends TestBase {
         return result;
     }
 
-    @ParameterizedTest
-    @MethodSource("groupProvider")
-    public void canCreateMultipleGroups(GroupData group) {
-        var oldGroups = app.groups().getList();
-        app.groups().createGroup(group);
-        var newGroups = app.groups().getList();
-        GroupData createdGroup = Collections.max(newGroups, app.groups().compareById()); //Забираю максимальный айди через компаратор
-        oldGroups.add(group //в старую группу добавляю реальный объект созданный раньше
-                .withId(createdGroup.id())
-                .withName(createdGroup.name())
-                .withHeader(createdGroup.header())
-                .withFooter(createdGroup.footer())
-        );
-        Assertions.assertEquals( //через стримы сравниваю между собой списки и превращаю обратно в списки
-                oldGroups.stream().sorted(app.groups().compareById()).toList(),
-                newGroups.stream().sorted(app.groups().compareById()).toList());
-    }
 
     @ParameterizedTest
     @MethodSource("singleRandomGroup")

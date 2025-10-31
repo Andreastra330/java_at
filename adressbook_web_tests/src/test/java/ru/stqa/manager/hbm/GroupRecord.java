@@ -1,11 +1,9 @@
 package ru.stqa.manager.hbm;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Entity
@@ -28,6 +26,11 @@ public class GroupRecord {
     private final LocalDateTime deprecated = LocalDateTime.now();
 
 //    public Date deprecated = new Date();
+    @ManyToMany
+    @JoinTable(name = "address_in_groups",
+            joinColumns = @JoinColumn(name = "group_id"),
+            inverseJoinColumns = @JoinColumn(name = "id"))
+    public List<ContactRecord> contacts;
 
     public GroupRecord(int id, String name, String header, String footer) {
         this.id = id;

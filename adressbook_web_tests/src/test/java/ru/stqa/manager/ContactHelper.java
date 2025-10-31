@@ -1,8 +1,10 @@
 package ru.stqa.manager;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.support.ui.Select;
 import ru.stqa.config.ConfigReader;
 import ru.stqa.model.ContactData;
+import ru.stqa.model.GroupData;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -19,6 +21,18 @@ public class ContactHelper extends HelperBase {
         fillContactForm(contact);
         saveContactForm();
         returnToContactPage();
+    }
+
+    public void createContact(ContactData contact, GroupData group) {
+        openContactCreationPage();
+        fillContactForm(contact);
+        selectGroup(group);
+        saveContactForm();
+        returnToContactPage();
+    }
+
+    private void selectGroup(GroupData group) {
+        new Select(manager.findEl(By.name("new_group"),5)).selectByValue(group.id());
     }
 
     public void deleteContact(ContactData contact) {
@@ -172,4 +186,6 @@ public class ContactHelper extends HelperBase {
                 .map(g -> g.id() + ":" + g.firstName() + ":" + g.lastName() + ":" + g.address())
                 .toList();
     }
+
+
 }

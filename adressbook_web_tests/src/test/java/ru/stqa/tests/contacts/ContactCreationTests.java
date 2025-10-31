@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.stqa.model.ContactData;
+import ru.stqa.model.GroupData;
 import ru.stqa.tests.TestBase;
 import ru.stqa.utils.Utils;
 import tools.jackson.core.type.TypeReference;
@@ -20,7 +21,6 @@ public class ContactCreationTests extends TestBase {
 
     public static List<ContactData> contactProvider() throws IOException {
         var result = new ArrayList<ContactData>();
-        //var json = Files.readString(Paths.get("contacts.json"));
         try (var inputStream = Thread.currentThread()
                 .getContextClassLoader()
                 .getResourceAsStream("GeneratorFiles/contacts.json")) {
@@ -36,20 +36,6 @@ public class ContactCreationTests extends TestBase {
         return result;
     }
 
-    @ParameterizedTest
-    @MethodSource("contactProvider")
-    public void canCreateMultipleContacts(ContactData contact) {
-        var oldContacts = app.contacts().getList();
-        app.contacts().createContact(contact);
-        var newContacts = app.contacts().getList();
-        ContactData createdContact = Collections.max(newContacts, app.contacts().compareById()); //Присваиваю новому объекту данные из newContacts у которого максимальный айди
-        oldContacts.add(createdContact);
-
-        Assertions.assertEquals( //Сравнение через стримы по айди с помощью компаратора, и дальнейшим преобразованием в списки
-                oldContacts.stream().sorted(app.contacts().compareById()).toList(),
-                newContacts.stream().sorted(app.contacts().compareById()).toList()
-        );
-    }
 
     @ParameterizedTest
     @MethodSource("contactProvider")
@@ -77,7 +63,42 @@ public class ContactCreationTests extends TestBase {
     }
 
     @Test
-    public void canCreateOnlyWithPhono() {
+    public void canCreateOnlyWithPhoto() {
         app.contacts().createContact(new ContactData().withPhoto(Utils.randomFile("src/test/resources/images")));
+    }
+
+    @Test
+    public void contactCreationGroup(){
+        var contacts = new ContactData()
+                .withFirstName(Utils.randomString(10))
+                .withLastName(Utils.randomString(10))
+                .withPhoto(Utils.randomFile("src/test/resources/images"));
+
+        app.contacts().createContact(contacts);
+    }
+
+    @Test
+    public void contactCreationGroupInGroup(){
+        var contacts = new ContactData()
+                .withFirstName(Utils.randomString(10))
+                .withLastName(Utils.randomString(10))
+                .withAddress(Utils.randomString(10))
+                .withPhoto(Utils.randomFile("src/test/resources/images"));
+
+        if (app.hbm().getGroupCount() == 0) {
+            app.hbm().createGroup(new GroupData("", "group name", "group header", "group footer"));
+        }
+        var group = app.hbm().getGroupListHibernate().get(0);
+
+        var oldRelated = app.hbm().getContactInGroup(group);
+        app.contacts().createContact(contacts,group);
+        var newRelated = app.hbm().getContactInGroup(group);
+        Assertions.assertEquals(oldRelated.size() + 1,newRelated.size());
+        ContactData createdContact = Collections.max(newRelated, app.contacts().compareById()); //Присваиваю новому объекту данные из newContacts у которого максимальный айди
+        oldRelated.add(createdContact);
+        Assertions.assertEquals(
+                app.contacts().compareContactsWithModifyData(oldRelated),
+                app.contacts().compareContactsWithModifyData(newRelated));
+
     }
 }

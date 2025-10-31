@@ -10,29 +10,6 @@ import java.util.Random;
 public class ContactModifyTests extends TestBase {
 
     @Test
-    void canModifyContact() {
-        if (app.contacts().getCount() == 0) {
-            app.contacts().createContact(new ContactData());
-        }
-
-        var oldContacts = app.contacts().getList();
-        int index = new Random().nextInt(oldContacts.size());
-        var modifyData = new ContactData()
-                .withFirstName("MODIFY NAME")
-                .withLastName("MODIFY LAST NAME")
-                .withAddress("MODIFY ADDRESS");
-
-        app.contacts().modifyContact(oldContacts.get(index), modifyData);
-        var newContacts = app.contacts().getList();
-        oldContacts.set(index, modifyData.withId(oldContacts.get(index).id()));
-
-        Assertions.assertEquals(
-                oldContacts.stream().sorted(app.contacts().compareById()).toList(),
-                newContacts.stream().sorted(app.contacts().compareById()).toList()
-        );
-    }
-
-    @Test
     void canModifyContactHibernate() {
         if (app.hbm().getContactCount() == 0) {
             app.hbm().createContact(new ContactData(
