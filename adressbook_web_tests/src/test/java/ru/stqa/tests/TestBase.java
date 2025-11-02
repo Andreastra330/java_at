@@ -1,5 +1,6 @@
 package ru.stqa.tests;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import ru.stqa.manager.ApplicationManager;
 
@@ -15,4 +16,8 @@ public class TestBase {
 
     }
 
+    @AfterEach
+    void checkDatabaseConsistency(){
+        app.jdbc().consistency();
+    }
 }

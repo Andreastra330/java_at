@@ -14,16 +14,16 @@ public class Utils {
         return result;
     }
 
-    public static String randomInt(int n){
-       var result = new Random().nextInt(90000);
-       return Integer.toString(result);
+    public static String randomInt(int n) {
+        var result = new Random().nextInt(90000);
+        return Integer.toString(result);
 
     }
 
-    public static String randomFile(String path){
+    public static String randomFile(String path) {
         var fileNames = new File(path).list();
         assert fileNames != null;
         var index = new Random().nextInt(fileNames.length);
-        return Paths.get(path,fileNames[index]).toString();
+        return Paths.get(path, fileNames[index]).toString();
     }
 }

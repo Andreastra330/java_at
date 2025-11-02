@@ -31,6 +31,54 @@ public class ContactHelper extends HelperBase {
         returnToContactPage();
     }
 
+    public void deleteContactFromGroup(GroupData group)
+    {
+        openContactPage();
+        choiceGroup(group);
+        removeFromGroup();
+        openContactPage();
+    }
+
+    private void removeFromGroup() {
+        click(By.name("remove"));
+    }
+
+
+    public boolean checkContactsInGroup(GroupData group)
+    {
+        openContactPage();
+        new Select(manager.findEl(By.name("group"),5)).selectByValue(group.id());
+        return manager.driver.findElements(By.name("selected[]")).isEmpty();
+    }
+
+    private void choiceGroup(GroupData group) {
+        new Select(manager.findEl(By.name("group"),5)).selectByValue(group.id());
+        click(By.name("selected[]"));
+    }
+
+    public void addContactInGroup(GroupData group)
+    {
+        openContactPage();
+        choiceContactWithoutGroup();
+        contactToGroup(group);
+        openContactPage();
+    }
+
+    private void contactToGroup(GroupData group) {
+        new Select(manager.findEl(By.name("to_group"),5)).selectByValue(group.id());
+        click(By.xpath("//input[@value='Add to']"));
+    }
+
+    private void choiceContactWithoutGroup() {
+        new Select(manager.findEl(By.name("group"),5)).selectByValue("[none]");
+        if(manager.driver.findElements(By.name("selected[]")).isEmpty()){
+            manager.hbm().createContact(new ContactData("", "firstName", "lastName", "address", "email",
+                    "email2", "email3", "home", "mobile", "work"));
+            new Select(manager.findEl(By.name("group"),5)).selectByValue("[none]");
+        }
+        click(By.name("selected[]"));
+    }
+
     private void selectGroup(GroupData group) {
         new Select(manager.findEl(By.name("new_group"),5)).selectByValue(group.id());
     }
@@ -116,7 +164,7 @@ public class ContactHelper extends HelperBase {
     }
 
     public void openContactPage() {
-        click(By.linkText("home"));
+        clickIfClickable(By.linkText("home"));
     }
 
     public void fillContactForm(ContactData contact) {
@@ -186,6 +234,7 @@ public class ContactHelper extends HelperBase {
                 .map(g -> g.id() + ":" + g.firstName() + ":" + g.lastName() + ":" + g.address())
                 .toList();
     }
+
 
 
 }

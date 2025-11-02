@@ -21,6 +21,10 @@ public class HelperBase {
         manager.findEl(locator, 5).click();
     }
 
+    protected void clickIfClickable(By locator){
+        manager.findElIfClickable(locator,5).click();
+    }
+
     protected void type(By locator, String text) {
         manager.findEl(locator, 3).sendKeys(text);
     }
@@ -28,7 +32,8 @@ public class HelperBase {
     protected void attach(By locator, String file) {
         if (!file.isEmpty()) {
             manager.findEl(locator, 3).sendKeys(Paths.get(file).toAbsolutePath().toString());
-        } else {}
+        } else {
+        }
     }
 
 }

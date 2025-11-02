@@ -87,6 +87,12 @@ public class ApplicationManager {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
 
+    public WebElement findElIfClickable(By locator, int time) {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(time));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+        return wait.until(ExpectedConditions.elementToBeClickable(locator));
+    }
+
     public List<WebElement> findElements(By locator, int time) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(time));
         return wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(locator));
