@@ -6,9 +6,8 @@ import ru.stqa.config.ConfigReader;
 import ru.stqa.model.ContactData;
 import ru.stqa.model.GroupData;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ContactHelper extends HelperBase {
 
@@ -31,8 +30,7 @@ public class ContactHelper extends HelperBase {
         returnToContactPage();
     }
 
-    public void deleteContactFromGroup(GroupData group)
-    {
+    public void deleteContactFromGroup(GroupData group) {
         openContactPage();
         choiceGroup(group);
         removeFromGroup();
@@ -44,20 +42,18 @@ public class ContactHelper extends HelperBase {
     }
 
 
-    public boolean checkContactsInGroup(GroupData group)
-    {
+    public boolean checkContactsInGroup(GroupData group) {
         openContactPage();
-        new Select(manager.findEl(By.name("group"),5)).selectByValue(group.id());
+        new Select(manager.findEl(By.name("group"), 5)).selectByValue(group.id());
         return manager.driver.findElements(By.name("selected[]")).isEmpty();
     }
 
     private void choiceGroup(GroupData group) {
-        new Select(manager.findEl(By.name("group"),5)).selectByValue(group.id());
+        new Select(manager.findEl(By.name("group"), 5)).selectByValue(group.id());
         click(By.name("selected[]"));
     }
 
-    public void addContactInGroup(GroupData group)
-    {
+    public void addContactInGroup(GroupData group) {
         openContactPage();
         choiceContactWithoutGroup();
         contactToGroup(group);
@@ -65,22 +61,22 @@ public class ContactHelper extends HelperBase {
     }
 
     private void contactToGroup(GroupData group) {
-        new Select(manager.findEl(By.name("to_group"),5)).selectByValue(group.id());
+        new Select(manager.findEl(By.name("to_group"), 5)).selectByValue(group.id());
         click(By.xpath("//input[@value='Add to']"));
     }
 
     private void choiceContactWithoutGroup() {
-        new Select(manager.findEl(By.name("group"),5)).selectByValue("[none]");
-        if(manager.driver.findElements(By.name("selected[]")).isEmpty()){
+        new Select(manager.findEl(By.name("group"), 5)).selectByValue("[none]");
+        if (manager.driver.findElements(By.name("selected[]")).isEmpty()) {
             manager.hbm().createContact(new ContactData("", "firstName", "lastName", "address", "email",
                     "email2", "email3", "home", "mobile", "work"));
-            new Select(manager.findEl(By.name("group"),5)).selectByValue("[none]");
+            new Select(manager.findEl(By.name("group"), 5)).selectByValue("[none]");
         }
         click(By.name("selected[]"));
     }
 
     private void selectGroup(GroupData group) {
-        new Select(manager.findEl(By.name("new_group"),5)).selectByValue(group.id());
+        new Select(manager.findEl(By.name("new_group"), 5)).selectByValue(group.id());
     }
 
     public void deleteContact(ContactData contact) {
@@ -236,5 +232,53 @@ public class ContactHelper extends HelperBase {
     }
 
 
+    public String getPhones(ContactData contact) {
+        return manager.findEl(By.xpath(String.format("//input[@id = '%s']/../../td[6]", contact.id())), 5).getText();
 
+    }
+
+    public Map<String, String> getPhonesWithMap() {
+        var result = new HashMap<String, String>();
+        var rows = manager.findElements(By.name("entry"), 5);
+        rows.forEach(webElement -> {
+            var id = webElement.findElement(By.tagName("input")).getAttribute("id");
+            var phones = webElement.findElements(By.tagName("td")).get(5).getText();
+            result.put(id, phones);
+        });
+
+        return result;
+    }
+
+
+    public Map<String, String> getPhonesWithMapStream() {
+        return manager.findElements(By.name("entry"), 5).stream()
+                .collect(Collectors.toMap(
+                        e -> e.findElement(By.tagName("input")).getAttribute("id"),
+                        e -> e.findElements(By.tagName("td")).get(5).getText()
+                ));
+    }
+
+    public String getEmails(ContactData contact) {
+        return manager.findEl(By.xpath(String.format("//input[@id = '%s']/../../td[5]", contact.id())), 5).getText();
+    }
+
+    public Map<String, String> getEmailsWithMapStream() {
+        return manager.findElements(By.name("entry"), 5).stream()
+                .collect(Collectors.toMap(
+                        e -> e.findElement(By.tagName("input")).getAttribute("id"),
+                        e -> e.findElements(By.tagName("td")).get(4).getText()
+                ));
+    }
+
+    public String getAddress(ContactData contact) {
+        return manager.findEl(By.xpath(String.format("//input[@id = '%s']/../../td[4]", contact.id())), 5).getText();
+    }
+
+    public Map<String, String> getAddressWithMapStream() {
+        return manager.findElements(By.name("entry"), 5).stream()
+                .collect(Collectors.toMap(
+                        e -> e.findElement(By.tagName("input")).getAttribute("id"),
+                        e -> e.findElements(By.tagName("td")).get(3).getText()
+                ));
+    }
 }

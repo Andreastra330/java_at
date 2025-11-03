@@ -16,6 +16,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public class GroupCreationTests extends TestBase {
 
@@ -29,11 +32,12 @@ public class GroupCreationTests extends TestBase {
         return result;
     }
 
-    public static List<GroupData> singleRandomGroup() {
-        return List.of(new GroupData()
+    public static Stream<GroupData> randomGroups() {
+        Supplier<GroupData> randomGroup = () -> new GroupData()
                 .withName(Utils.randomString(10))
                 .withHeader(Utils.randomString(20))
-                .withFooter(Utils.randomString(30)));
+                .withFooter(Utils.randomString(30));
+        return Stream.generate(randomGroup).limit(3);
     }
 
     public static List<GroupData> negativeGroupProvider() {
@@ -46,9 +50,8 @@ public class GroupCreationTests extends TestBase {
         return result;
     }
 
-
     @ParameterizedTest
-    @MethodSource("singleRandomGroup")
+    @MethodSource("randomGroups")
     public void canCreateGroupWithJdbc(GroupData group) {
         var oldGroups = app.jdbc().getGroupListJdbc();
         app.groups().createGroup(group);
@@ -67,21 +70,19 @@ public class GroupCreationTests extends TestBase {
 
 
     @ParameterizedTest
-    @MethodSource("singleRandomGroup")
+    @MethodSource("randomGroups")
     public void canCreateGroupWithHibernate(GroupData group) {
         var oldGroups = app.hbm().getGroupListHibernate();
         app.hbm().createGroup(new GroupData("", "group name", "group header", "group footer"));
+        app.hbm().createGroup(new GroupData("", "group name", "group header", "group footer"));
         var newGroups = app.hbm().getGroupListHibernate();
-        GroupData createdGroup = Collections.max(newGroups, app.groups().compareById()); //Забираю максимальный айди через компаратор
-        oldGroups.add(group //в старую группу добавляю реальный объект созданный раньше
-                .withId(createdGroup.id())
-                .withName(createdGroup.name())
-                .withHeader(createdGroup.header())
-                .withFooter(createdGroup.footer())
-        );
+        var extraGroups = newGroups.stream().filter(g -> !oldGroups.contains(g)).toList();
+
+        oldGroups.addAll(extraGroups);
+
         Assertions.assertEquals( //через стримы сравниваю между собой списки и превращаю обратно в списки
-                oldGroups.stream().sorted(app.groups().compareById()).toList(),
-                newGroups.stream().sorted(app.groups().compareById()).toList());
+                Set.copyOf(oldGroups),
+                Set.copyOf(newGroups));
     }
 
     @Test

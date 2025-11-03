@@ -13,7 +13,9 @@ import tools.jackson.databind.json.JsonMapper;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Generator {
     @Parameter(names = {"--type", "-t"})
@@ -92,32 +94,26 @@ public class Generator {
         }
     }
 
+    private Object generateData(Supplier<Object> dataSupplier) {
+        return Stream.generate(dataSupplier).limit(count).collect(Collectors.toList());
+    }
+
 
     private Object generateGroups() {
-        var result = new ArrayList<GroupData>();
-
-        for (int i = 0; i < count; i++) {
-            result.add(new GroupData()
-                    .withName(Utils.randomString(i * 10))
-                    .withHeader(Utils.randomString(i * 10))
-                    .withFooter(Utils.randomString(i * 10)));
-        }
-        return result;
+        return generateData(()-> new GroupData()
+                .withName(Utils.randomString(10))
+                .withHeader(Utils.randomString( 10))
+                .withFooter(Utils.randomString(10)));
     }
 
     private Object generateContacts() {
-        var result = new ArrayList<ContactData>();
+        return generateData(()-> new ContactData()
+                .withFirstName(Utils.randomString( 10))
+                .withLastName(Utils.randomString(10))
+                .withAddress(Utils.randomString( 10))
+                .withEmail(Utils.randomString( 10))
+                .withWorkPhone(Utils.randomInt( 2))
+                .withPhoto(Utils.randomFile("src/test/resources/images")));
 
-        for (int i = 0; i < count; i++) {
-            result.add(new ContactData()
-                    .withFirstName(Utils.randomString(i * 10))
-                    .withLastName(Utils.randomString(i * 10))
-                    .withAddress(Utils.randomString(i * 10))
-                    .withEmail(Utils.randomString(i * 10))
-                    .withWorkPhone(Utils.randomInt(i * 2))
-                    .withPhoto(Utils.randomFile("src/test/resources/images"))
-            );
-        }
-        return result;
     }
 }
