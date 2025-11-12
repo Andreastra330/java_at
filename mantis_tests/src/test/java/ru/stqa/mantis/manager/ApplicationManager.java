@@ -17,6 +17,8 @@ public class ApplicationManager {
     private HttpSessionHelper HttpSessionHelper;
     private JamesCliHelper jamesCliHelper;
     private MailHelper mailHelper;
+    private JamesApiHelper jamesApiHelper;
+    private RestApiHelper restApiHelper;
 
 
 //    public void initialBrowser(String browser) {
@@ -81,11 +83,25 @@ public class ApplicationManager {
         return jamesCliHelper;
     }
 
+    public JamesApiHelper jamesApi() {
+        if (jamesApiHelper == null){
+            jamesApiHelper = new JamesApiHelper(this);
+        }
+        return jamesApiHelper;
+    }
+
     public MailHelper mail() {
         if (mailHelper == null){
             mailHelper = new MailHelper(this);
         }
         return mailHelper;
+    }
+
+    public RestApiHelper rest() {
+        if (restApiHelper == null){
+            restApiHelper = new RestApiHelper(this);
+        }
+        return restApiHelper;
     }
 
     public boolean isElementPresent(By locator) {

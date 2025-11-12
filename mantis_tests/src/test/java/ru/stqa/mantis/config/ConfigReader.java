@@ -30,12 +30,26 @@ public class ConfigReader {
         return properties.getProperty("base.url");
     }
 
+    public static String getMantisApiKey() {
+        return properties.getProperty("mantis.apikey");
+    }
+
     public static String getJamesWorkingDir() {
         var dir = properties.getProperty("james.workingdir");
         if (!dir.endsWith("/") && !dir.endsWith("\\")) {
             dir += "/";
         }
         return dir;
+    }
+
+    public static String buildApiUri(String endpoint){
+        String baseUrl = properties.getProperty("base.apiuri");
+        if (endpoint.startsWith("/")) {
+            return baseUrl + endpoint;
+        } else {
+            return baseUrl + "/" + endpoint;
+        }
+
     }
 
     public static String buildUrl(String endpoint) {
