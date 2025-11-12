@@ -30,6 +30,14 @@ public class ConfigReader {
         return properties.getProperty("base.url");
     }
 
+    public static String getJamesWorkingDir() {
+        var dir = properties.getProperty("james.workingdir");
+        if (!dir.endsWith("/") && !dir.endsWith("\\")) {
+            dir += "/";
+        }
+        return dir;
+    }
+
     public static String buildUrl(String endpoint) {
         String baseUrl = getBaseUrl();
         if (endpoint.startsWith("/")) {

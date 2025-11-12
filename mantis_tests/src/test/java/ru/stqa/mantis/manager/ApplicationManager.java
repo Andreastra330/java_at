@@ -14,6 +14,10 @@ public class ApplicationManager {
     protected WebDriver driver;
     private String browser;
     private SessionHelper sessionHelper;
+    private HttpSessionHelper HttpSessionHelper;
+    private JamesCliHelper jamesCliHelper;
+    private MailHelper mailHelper;
+
 
 //    public void initialBrowser(String browser) {
 //        this.browser = browser;
@@ -62,6 +66,28 @@ public class ApplicationManager {
         }
         return sessionHelper;
     }
+
+    public HttpSessionHelper http() {
+        if (HttpSessionHelper == null){
+            HttpSessionHelper = new HttpSessionHelper(this);
+        }
+        return HttpSessionHelper;
+    }
+
+    public JamesCliHelper jamesCli() {
+        if (jamesCliHelper == null){
+            jamesCliHelper = new JamesCliHelper(this);
+        }
+        return jamesCliHelper;
+    }
+
+    public MailHelper mail() {
+        if (mailHelper == null){
+            mailHelper = new MailHelper(this);
+        }
+        return mailHelper;
+    }
+
     public boolean isElementPresent(By locator) {
         try {
             Thread.sleep(100);
@@ -95,6 +121,10 @@ public class ApplicationManager {
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
     }
 
+    public void goTo(String link){
+        driver.get(link);
+    }
+
     public void sleep(int time) {
         try {
             Thread.sleep(time);
@@ -102,4 +132,6 @@ public class ApplicationManager {
             e.printStackTrace();
         }
     }
+
+
 }
