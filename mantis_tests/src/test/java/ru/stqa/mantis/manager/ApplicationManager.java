@@ -19,6 +19,7 @@ public class ApplicationManager {
     private MailHelper mailHelper;
     private JamesApiHelper jamesApiHelper;
     private RestApiHelper restApiHelper;
+    private SoapApiHelper soapApiHelper;
 
 
 //    public void initialBrowser(String browser) {
@@ -26,6 +27,7 @@ public class ApplicationManager {
 //
 //
 //    }
+
 //    //session().login(ConfigReader.getUsername(), ConfigReader.getPassword());
 //    public WebDriver driver(String property){
 //        String baseUrl = ConfigReader.getBaseUrl();
@@ -102,6 +104,13 @@ public class ApplicationManager {
             restApiHelper = new RestApiHelper(this);
         }
         return restApiHelper;
+    }
+
+    public SoapApiHelper soap() {
+        if (soapApiHelper == null){
+            soapApiHelper = new SoapApiHelper(this);
+        }
+        return soapApiHelper;
     }
 
     public boolean isElementPresent(By locator) {

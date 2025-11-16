@@ -5,8 +5,18 @@ plugins {
 group = 'org.example'
 version = '1.0-SNAPSHOT'
 
+def allureVersion = '2.29.0'
+def aspectJVersion = '1.9.22'
+
 repositories {
     mavenCentral()
+}
+
+configurations {
+    agent {
+        canBeResolved = true
+        canBeConsumed = true
+    }
 }
 
 dependencies {
@@ -22,6 +32,11 @@ dependencies {
     testImplementation 'com.mysql:mysql-connector-j:9.4.0'
 
     testImplementation "org.hibernate.orm:hibernate-core:7.1.4.Final"
+
+    agent "org.aspectj:aspectjweaver:$aspectJVersion"
+
+    testImplementation platform("io.qameta.allure:allure-bom:$allureVersion")
+    testImplementation "io.qameta.allure:allure-junit5"
 }
 
 test {
@@ -29,4 +44,5 @@ test {
     if(project.hasProperty("browser")){
         systemProperty("browser",project.property("browser"))
     }
+    jvmArgs = [ "-javaagent:${configurations.agent.singleFile}" ]
 }

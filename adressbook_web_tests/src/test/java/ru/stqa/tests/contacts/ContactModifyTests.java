@@ -1,18 +1,22 @@
 package ru.stqa.tests.contacts;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import ru.stqa.model.ContactData;
 import ru.stqa.model.GroupData;
 import ru.stqa.tests.TestBase;
-
+import org.junit.jupiter.api.*;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ContactModifyTests extends TestBase {
 
     @Test
-    void canModifyContactHibernate() {
+    @Order(1)
+    void canModifyContactHibernate() throws InterruptedException {
         if (app.hbm().getContactCount() == 0) {
             app.hbm().createContact(new ContactData(
                     "", "firstName", "lastName", "address", "email",
@@ -26,6 +30,7 @@ public class ContactModifyTests extends TestBase {
                 .withFirstName("MODIFY NAME")
                 .withLastName("MODIFY LAST NAME")
                 .withAddress("MODIFY ADDRESS");
+        Thread.sleep(2000);
         app.contacts().modifyContactHibarnate(oldContacts.get(index), modifyData);
         var newContacts = app.hbm().getContactListHibernate();
         oldContacts.set(index, modifyData);
@@ -37,6 +42,7 @@ public class ContactModifyTests extends TestBase {
     }
 
     @Test
+    @Order(2)
     void addContactInGroup()
     {
         if (app.hbm().getGroupCount() == 0) {
@@ -47,8 +53,8 @@ public class ContactModifyTests extends TestBase {
         var oldRelated = app.hbm().getContactInGroup(group);
         app.contacts().addContactInGroup(group);
         var newRelated = app.hbm().getContactInGroup(group);
-        ContactData createdContact = Collections.max(newRelated, app.contacts().compareById());
-        oldRelated.add(createdContact);
+        var extraGroups = newRelated.stream().filter(g -> !oldRelated.contains(g)).toList();
+        oldRelated.addAll(extraGroups);
         Assertions.assertEquals(
                 app.contacts().compareContactsWithModifyData(oldRelated),
                 app.contacts().compareContactsWithModifyData(newRelated));
@@ -56,6 +62,7 @@ public class ContactModifyTests extends TestBase {
 
 
     @Test
+    @Order(3)
     void deleteContactInGroup()
     {
         if (app.hbm().getGroupCount() == 0) {

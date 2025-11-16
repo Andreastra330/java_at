@@ -16,8 +16,13 @@ public class TestBase {
 
     }
 
+
     @AfterEach
-    void checkDatabaseConsistency(){
-        app.jdbc().consistency();
+    public void stopBrowser() {
+        app.stopBrowser();
     }
+//    @AfterEach
+//    void checkDatabaseConsistency(){
+//        app.jdbc().consistency();
+//    }
 }

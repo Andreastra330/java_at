@@ -1,16 +1,17 @@
 package ru.stqa.tests.contacts;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import ru.stqa.model.ContactData;
 import ru.stqa.tests.TestBase;
 
 import java.util.Random;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ContactRemovalTests extends TestBase {
 
 
     @Test
+    @Order(1)
     public void canRemovalContactHibernate() {
         if (app.hbm().getContactCount() == 0) {
             app.hbm().createContact(new ContactData("", "firstName", "lastName", "address", "email",
@@ -28,6 +29,7 @@ public class ContactRemovalTests extends TestBase {
     }
 
     @Test
+    @Order(2)
     public void canRemovalAllContactsWithClick() {
         if (app.contacts().getCount() == 0) {
             app.contacts().createContact(new ContactData());
@@ -36,6 +38,7 @@ public class ContactRemovalTests extends TestBase {
     }
 
     @Test
+    @Order(3)
     public void canRemovalAllContactsWithBtn() {
         if (app.contacts().getCount() == 0) {
             app.contacts().createContact(new ContactData());

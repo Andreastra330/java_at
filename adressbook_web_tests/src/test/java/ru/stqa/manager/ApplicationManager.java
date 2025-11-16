@@ -35,6 +35,13 @@ public class ApplicationManager {
         }
     }
 
+    public void stopBrowser(){
+        if (driver!=null){
+            driver.quit();
+            driver=null;
+        }
+    }
+
     public LoginHelper session() {
         if (session == null) {
             session = new LoginHelper(this);

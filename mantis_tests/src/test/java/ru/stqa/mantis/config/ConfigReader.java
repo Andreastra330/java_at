@@ -30,6 +30,10 @@ public class ConfigReader {
         return properties.getProperty("base.url");
     }
 
+    public static String getSoapEndpoint(){
+        return properties.getProperty("soap.endpoint");
+    }
+
     public static String getMantisApiKey() {
         return properties.getProperty("mantis.apikey");
     }

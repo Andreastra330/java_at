@@ -1,11 +1,13 @@
 package ru.stqa.manager;
 
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.Select;
 import ru.stqa.config.ConfigReader;
 import ru.stqa.model.ContactData;
 import ru.stqa.model.GroupData;
 
+import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -14,7 +16,7 @@ public class ContactHelper extends HelperBase {
     public ContactHelper(ApplicationManager manager) {
         super(manager);
     }
-
+    @Step("Создание контакта через UI")
     public void createContact(ContactData contact) {
         openContactCreationPage();
         fillContactForm(contact);
@@ -22,6 +24,7 @@ public class ContactHelper extends HelperBase {
         returnToContactPage();
     }
 
+    @Step("Создание контакта с группой")
     public void createContact(ContactData contact, GroupData group) {
         openContactCreationPage();
         fillContactForm(contact);
@@ -29,7 +32,7 @@ public class ContactHelper extends HelperBase {
         saveContactForm();
         returnToContactPage();
     }
-
+    @Step("Удаление контакта из группы")
     public void deleteContactFromGroup(GroupData group) {
         openContactPage();
         choiceGroup(group);
