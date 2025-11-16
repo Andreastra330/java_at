@@ -8,7 +8,7 @@ public class TestBase {
     protected static ApplicationManager app;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws Exception {
         if (app == null) {
             app = new ApplicationManager();
         }

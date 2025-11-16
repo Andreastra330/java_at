@@ -29,6 +29,9 @@ public class ConfigReader {
     public static String getBaseUrl() {
         return properties.getProperty("base.url");
     }
+    public static String getSeleniumURL() {
+        return properties.getProperty("seleniumServer");
+    }
 
     public static String buildUrl(String endpoint) {
         String baseUrl = getBaseUrl();
