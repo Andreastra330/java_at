@@ -8,21 +8,13 @@ public class ConfigReader {
 
     static {
         properties = new Properties();
-
-
-        String configFile = System.getProperty("config", "config.properties");
-
         try (InputStream input = ConfigReader.class.getClassLoader()
-                .getResourceAsStream(configFile)) {
-
-            if (input == null) {
-                throw new RuntimeException("Config file not found: " + configFile);
+                .getResourceAsStream("ci.properties")) {
+            if (input != null) {
+                properties.load(input);
             }
-
-            properties.load(input);
-
         } catch (Exception e) {
-            throw new RuntimeException("Could not load config file: " + configFile, e);
+
         }
     }
 

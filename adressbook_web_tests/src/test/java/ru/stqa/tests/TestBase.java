@@ -5,24 +5,17 @@ import org.junit.jupiter.api.BeforeEach;
 import ru.stqa.manager.ApplicationManager;
 
 public class TestBase {
-    protected static ApplicationManager app;
+
+    protected ApplicationManager app;  // ← static убрали
 
     @BeforeEach
     public void setUp() throws Exception {
-        if (app == null) {
-            app = new ApplicationManager();
-        }
+        app = new ApplicationManager();   // ← создаём новый AM каждое выполнение
         app.initialBrowser(System.getProperty("browser", "chrome"));
-
     }
-
 
     @AfterEach
     public void stopBrowser() {
         app.stopBrowser();
     }
-//    @AfterEach
-//    void checkDatabaseConsistency(){
-//        app.jdbc().consistency();
-//    }
 }

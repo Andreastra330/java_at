@@ -125,7 +125,7 @@ public class HibernateHelper extends HelperBase {
             session.getTransaction().commit();
         });
     }
-
+    @Step("Создание окнтакта через Hibernate")
     public void createContact(ContactData contactData) {
         sessionFactory.inSession(session -> {
             session.getTransaction().begin();
